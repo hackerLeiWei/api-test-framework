@@ -1,0 +1,6 @@
+pytest==8.3.3
+requests==2.32.3
+PyYAML==6.0.2
+allure-pytest==2.13.5
+flask==3.0.3
+jsonschema==4.23.0

@@ -1,0 +1,39 @@
+# 放到仓库根目录使用。三档触发：合并门禁 / 每晚回归 / 发版前全量。
+stages: [smoke, regression]
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip-cache"
+
+default:
+  image: python:3.11-slim
+  cache:
+    paths: [.pip-cache]
+  before_script:
+    - pip install -r requirements.txt
+    - python mock/mock_server.py &   # 真实环境删掉此行，改为指向 SIT
+    - sleep 2
+
+# 合并门禁：冒烟不过不许合
+smoke:
+  stage: smoke
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - pytest -m smoke --env=sit
+  artifacts:
+    when: always
+    paths: [reports/allure-results]
+    expire_in: 1 week
+
+# 每晚全量回归
+nightly-regression:
+  stage: regression
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  script:
+    - pytest --env=sit -n auto || true
+    - pytest --env=sit --last-failed   # 失败用例重跑一次，区分真失败与环境抖动
+  artifacts:
+    when: always
+    paths: [reports/allure-results]
+    expire_in: 1 month

@@ -1,0 +1,17 @@
+env_name: uat
+timeout: 20
+retry: 2
+
+services:
+  mes:
+    base_url: https://mes-uat.internal.example.com/mes
+  erp:
+    base_url: https://erp-uat.internal.example.com/erp
+
+auth:
+  username: ${MES_TEST_USER}
+  password: ${MES_TEST_PASSWORD}
+
+database:
+  mes:
+    dsn: ${MES_DB_DSN:-}

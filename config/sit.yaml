@@ -1,0 +1,19 @@
+env_name: sit
+timeout: 10
+retry: 2
+
+services:
+  mes:
+    base_url: http://127.0.0.1:9527/mes
+  erp:
+    base_url: http://127.0.0.1:9527/erp
+
+auth:
+  # 生产禁止把真实口令写进仓库，用 CI 的 secret 注入环境变量：
+  # username: ${MES_TEST_USER}
+  username: qa_bot
+  password: ${MES_TEST_PASSWORD:-qa_bot_pwd}
+
+database:
+  mes:
+    dsn: ${MES_DB_DSN:-}

@@ -1,0 +1,17 @@
+env_name: dev
+timeout: 10
+retry: 1
+
+services:
+  mes:
+    base_url: http://127.0.0.1:9527/mes
+  erp:
+    base_url: http://127.0.0.1:9527/erp
+
+auth:
+  username: qa_bot
+  password: ${MES_TEST_PASSWORD:-qa_bot_pwd}
+
+database:
+  mes:
+    dsn: ${MES_DB_DSN:-}

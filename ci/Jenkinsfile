@@ -1,0 +1,34 @@
+pipeline {
+  agent any
+  parameters {
+    choice(name: 'ENV', choices: ['sit', 'uat', 'dev'], description: '测试环境')
+    choice(name: 'SCOPE', choices: ['smoke', 'e2e', 'all'], description: '执行范围')
+  }
+  triggers { cron('H 2 * * *') }   // 每晚全量回归
+  environment {
+    MES_TEST_PASSWORD = credentials('mes-test-password')
+  }
+  stages {
+    stage('准备') {
+      steps {
+        sh 'python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt'
+      }
+    }
+    stage('执行') {
+      steps {
+        script {
+          def marker = params.SCOPE == 'all' ? '' : "-m ${params.SCOPE}"
+          sh ". .venv/bin/activate && pytest ${marker} --env=${params.ENV}"
+        }
+      }
+    }
+  }
+  post {
+    always {
+      allure includeProperties: false, results: [[path: 'reports/allure-results']]
+    }
+    failure {
+      echo '冒烟失败即版本退回，请开发当天处理'
+    }
+  }
+}

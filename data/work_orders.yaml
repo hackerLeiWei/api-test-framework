@@ -1,0 +1,23 @@
+# 参数化数据示例。真实项目请用脱敏生产数据（工艺参数、色号、克重、HS 编码）。
+valid_orders:
+  - desc: 常规针织订单
+    quantity: 100
+    line_code: LINE-01
+  - desc: 小批量打样
+    quantity: 5
+    line_code: LINE-02
+  - desc: 大货订单
+    quantity: 5000
+    line_code: LINE-01
+
+invalid_orders:
+  - desc: 数量为零
+    quantity: 0
+    expected_code: 40001
+  - desc: 数量为负
+    quantity: -10
+    expected_code: 40001
+  - desc: 产线不存在
+    quantity: 100
+    line_code: LINE-NOT-EXIST
+    expected_code: 40404
