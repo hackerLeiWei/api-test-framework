@@ -6,19 +6,20 @@
 
 启动: python mock/mock_server.py
 """
+
 from __future__ import annotations
 
 import threading
 import time
-from typing import Any, Dict
+from typing import Any
 
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 _LOCK = threading.Lock()
-_ORDERS: Dict[str, dict] = {}
-_PROGRESS: Dict[str, dict] = {}
-_ERP: Dict[str, dict] = {}
+_ORDERS: dict[str, dict] = {}
+_PROGRESS: dict[str, dict] = {}
+_ERP: dict[str, dict] = {}
 _TOKEN = "mock-token"
 
 ERP_SYNC_DELAY_SECONDS = 2.0
@@ -56,7 +57,11 @@ def create_order():
     order = {**body, "status": "CREATED"}
     with _LOCK:
         _ORDERS[body["order_no"]] = order
-        _PROGRESS[body["order_no"]] = {"reported_qty": 0, "qualified_qty": 0, "defect_qty": 0}
+        _PROGRESS[body["order_no"]] = {
+            "reported_qty": 0,
+            "qualified_qty": 0,
+            "defect_qty": 0,
+        }
     return ok(order)
 
 
@@ -128,8 +133,18 @@ def loom_metrics():
     line_code = request.args.get("line_code", "LINE-01")
     return ok(
         [
-            {"line_code": line_code, "loom_id": "LM-001", "rpm": 620, "efficiency": 0.94},
-            {"line_code": line_code, "loom_id": "LM-002", "rpm": 598, "efficiency": 0.91},
+            {
+                "line_code": line_code,
+                "loom_id": "LM-001",
+                "rpm": 620,
+                "efficiency": 0.94,
+            },
+            {
+                "line_code": line_code,
+                "loom_id": "LM-002",
+                "rpm": 598,
+                "efficiency": 0.91,
+            },
         ]
     )
 
